@@ -160,3 +160,47 @@ samples/              explicitly labeled demo exports
 - **Port already in use:** add `--server.port 8502` to the Streamlit command.
 
 License: MIT. See `LICENSE`.
+
+
+## Test-plan redundancy & requirement-coverage extension
+
+A software-only extension now analyzes historical experiment portfolios to identify overlapping tests and build a smaller candidate test plan while preserving explicit requirement coverage.
+
+Implemented capabilities:
+- pairwise requirement-overlap analysis using Jaccard similarity
+- numeric outcome-similarity checks for repeated or near-duplicate tests
+- transparent greedy requirement-cover selection
+- cost- and duration-aware candidate test selection
+- before/after summaries for test count, requirement coverage, total cost and total duration
+- synthetic sample test-plan data
+- automated tests
+
+This extension is intentionally generic and does not use Volvo Penta data, physical rig data, legislation data, or proprietary test definitions. The greedy method is a practical heuristic and does not claim a mathematically minimal test plan.
+
+### Example use
+
+```python
+import pandas as pd
+from agentbench.test_redundancy import (
+    find_redundant_pairs,
+    greedy_requirement_cover,
+    summarize_plan,
+)
+
+tests = pd.read_csv("samples/test_plan.csv")
+pairs = find_redundant_pairs(
+    tests,
+    outcome_columns=["accuracy", "latency_ms"],
+)
+selected = greedy_requirement_cover(tests)
+summary = summarize_plan(tests, selected)
+
+print(pairs)
+print(selected)
+print(summary)
+```
+
+### CV-safe extension description
+
+- Extended LLM-AgentBench with a test-plan redundancy analysis module that identifies overlapping experiments using requirement similarity and numeric outcome similarity.
+- Added a transparent greedy coverage optimizer that reduces candidate test sets while preserving explicit requirement coverage and tracking cost and duration trade-offs.
