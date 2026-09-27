@@ -204,3 +204,36 @@ print(summary)
 
 - Extended LLM-AgentBench with a test-plan redundancy analysis module that identifies overlapping experiments using requirement similarity and numeric outcome similarity.
 - Added a transparent greedy coverage optimizer that reduces candidate test sets while preserving explicit requirement coverage and tracking cost and duration trade-offs.
+
+
+## Agentic AI resource orchestration extension
+
+A software-only simulation extension now studies resource monitoring, prediction, and adaptive allocation for synthetic agentic AI workloads across abstract edge and cloud nodes.
+
+Implemented capabilities:
+- synthetic agent workloads with CPU, memory, tool-call and latency-target attributes
+- abstract edge and cloud compute nodes with different capacity, latency and cost characteristics
+- latency estimation using compute pressure, memory pressure, tool-call overhead and predicted background load
+- moving-average load prediction from recent utilization history
+- three orchestration policies: static, rule-based and predictive/adaptive
+- per-task monitoring of node placement, predicted load, CPU utilization, memory utilization, latency, SLA violations, completion and estimated cost
+- policy comparison using completion rate, mean latency, p95 latency, SLA violations, utilization, cost and edge/cloud assignment counts
+- synthetic workload samples and automated tests
+
+This extension is intentionally simulation-based. It does not control real Kubernetes clusters, cloud accounts, edge devices, production networks or Ericsson systems. Resource and latency values are modelled inputs for reproducible experimentation.
+
+### Example use
+
+```python
+import pandas as pd
+from agentbench.resource_orchestrator import compare_policies
+
+tasks = pd.read_csv("samples/agentic_workloads.csv")
+comparison = compare_policies(tasks)
+print(comparison)
+```
+
+### CV-safe extension description
+
+- Extended LLM-AgentBench with a software-only cloud/edge resource orchestration simulator for agentic AI workloads with dynamic CPU, memory, tool-call and latency requirements.
+- Implemented static, rule-based and predictive allocation strategies and compared them using completion rate, mean/p95 latency, SLA violations, CPU/memory utilization, estimated cost and edge/cloud placement.
