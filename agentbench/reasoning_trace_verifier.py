@@ -83,6 +83,24 @@ def jaccard_similarity(a: str, b: str) -> float:
     return len(ta & tb) / len(ta | tb)
 
 
+def _normalize_polarity_tokens(text: str) -> set[str]:
+    """Normalize common positive/negative status words to comparable roots."""
+    tokens = _tokens(text)
+    normalized = set(tokens)
+    mapping = {
+        "succeeded": "success",
+        "successful": "success",
+        "successfully": "success",
+        "completed": "complete",
+        "failed": "failure",
+        "failing": "failure",
+        "disabled": "disable",
+        "enabled": "enable",
+    }
+    normalized.update(mapping[token] for token in tokens if token in mapping)
+    return normalized
+
+
 def _negation_signature(text: str) -> set[str]:
     tokens = list(_TOKEN_RE.findall((text or "").lower()))
     signature = set()
@@ -101,8 +119,8 @@ def contradiction_score(claim: str, evidence_text: str) -> float:
     c_neg = _negation_signature(claim)
     e_neg = _negation_signature(evidence_text)
 
-    claim_tokens = _tokens(claim)
-    evidence_tokens = _tokens(evidence_text)
+    claim_tokens = _normalize_polarity_tokens(claim)
+    evidence_tokens = _normalize_polarity_tokens(evidence_text)
 
     polarity_conflict = bool(
         (c_neg & evidence_tokens) or
@@ -110,10 +128,12 @@ def contradiction_score(claim: str, evidence_text: str) -> float:
     )
 
     explicit_conflict_terms = (
-        ("success" in claim_tokens and "failed" in evidence_tokens)
-        or ("failed" in claim_tokens and "success" in evidence_tokens)
-        or ("enabled" in claim_tokens and "disabled" in evidence_tokens)
-        or ("disabled" in claim_tokens and "enabled" in evidence_tokens)
+        ("success" in claim_tokens and "failure" in evidence_tokens)
+        or ("failure" in claim_tokens and "success" in evidence_tokens)
+        or ("complete" in claim_tokens and "failure" in evidence_tokens)
+        or ("failure" in claim_tokens and "complete" in evidence_tokens)
+        or ("enable" in claim_tokens and "disable" in evidence_tokens)
+        or ("disable" in claim_tokens and "enable" in evidence_tokens)
         or ("true" in claim_tokens and "false" in evidence_tokens)
         or ("false" in claim_tokens and "true" in evidence_tokens)
     )
