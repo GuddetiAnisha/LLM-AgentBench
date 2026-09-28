@@ -237,3 +237,25 @@ print(comparison)
 
 - Extended LLM-AgentBench with a software-only cloud/edge resource orchestration simulator for agentic AI workloads with dynamic CPU, memory, tool-call and latency requirements.
 - Implemented static, rule-based and predictive allocation strategies and compared them using completion rate, mean/p95 latency, SLA violations, CPU/memory utilization, estimated cost and edge/cloud placement.
+
+
+## Safe red-blue AI agent evaluation extension
+
+LLM-AgentBench now includes a non-operational red-blue teaming simulator for evaluating offensive and defensive AI-agent decision policies inside an abstract isolated environment.
+
+Implemented capabilities:
+- symbolic red-agent actions for reconnaissance-style observation, access probing, privilege-gain attempts, lateral-movement attempts, and data-access attempts
+- symbolic blue-agent actions for monitoring, blocking, isolation, credential rotation, policy application, and service recovery
+- rule-based and cautious red policies
+- rule-based and conservative blue policies
+- structured scenario definitions with detection threshold, containment strength, and recovery characteristics
+- per-step traces of red/blue actions, success/failure, suspicious score, privilege state, lateral position, detection, containment, false positives, and service availability
+- policy benchmarks using red success rate, detection rate, containment rate, recovery rate, false-positive rate, and mean blue response step
+- synthetic benchmark scenarios and automated tests
+
+This module is intentionally safe and non-operational. It contains no exploit code, malware, credential theft, network scanning, payload execution, or live-target capability. All actions are symbolic state transitions for controlled research and portfolio evaluation.
+
+### CV-safe extension description
+
+- Extended LLM-AgentBench with a safe red-blue teaming simulator for AI-agent evaluation in an isolated symbolic environment.
+- Implemented offensive and defensive agent policies, structured scenarios, per-step traces, and benchmark metrics including red success rate, detection, containment, recovery, false positives, and response time.
