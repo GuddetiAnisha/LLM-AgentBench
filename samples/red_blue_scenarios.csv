@@ -1,0 +1,7 @@
+scenario_id,difficulty,detection_threshold,containment_strength,recovery_speed
+RB01,1,0.30,0.45,0.85
+RB02,1,0.35,0.40,0.80
+RB03,2,0.42,0.35,0.75
+RB04,2,0.48,0.35,0.70
+RB05,3,0.55,0.30,0.65
+RB06,3,0.60,0.28,0.60
