@@ -1,0 +1,34 @@
+{
+  "evidence": [
+    {
+      "source_id": "policy-1",
+      "source_type": "policy",
+      "text": "Orders above 100 units require manager approval."
+    },
+    {
+      "source_id": "inventory-1",
+      "source_type": "tool",
+      "text": "Inventory contains 240 units of item A."
+    }
+  ],
+  "steps": [
+    {
+      "step_id": "step-1",
+      "claim": "Inventory contains 240 units of item A.",
+      "context": "The agent checks whether enough stock is available.",
+      "tool_name": "inventory_lookup",
+      "tool_result": "Inventory contains 240 units of item A."
+    },
+    {
+      "step_id": "step-2",
+      "claim": "The order requires manager approval.",
+      "context": "The requested order quantity is 120 units."
+    },
+    {
+      "step_id": "step-3",
+      "claim": "Manager approval has already been granted.",
+      "context": "The agent is preparing the final action."
+    }
+  ],
+  "final_answer": "The stock is available, but approval is required before proceeding."
+}
