@@ -259,3 +259,60 @@ This module is intentionally safe and non-operational. It contains no exploit co
 
 - Extended LLM-AgentBench with a safe red-blue teaming simulator for AI-agent evaluation in an isolated symbolic environment.
 - Implemented offensive and defensive agent policies, structured scenarios, per-step traces, and benchmark metrics including red success rate, detection, containment, recovery, false positives, and response time.
+
+
+## ReasonTraceVerifier — step-level verification for tool-using agents
+
+LLM-AgentBench now includes a software-only reasoning-trace verification extension for evaluating step-level claims produced by tool-using AI agents.
+
+Implemented capabilities:
+- represents reasoning traces as ordered steps with claims, context, tool names and tool results
+- represents external evidence with explicit source identifiers and source types
+- classifies each step as `SUPPORTED`, `CONTRADICTED` or `UNRESOLVED`
+- combines symbolic consistency checks with lightweight statistical text similarity
+- measures semantic grounding, contextual relevance, step-to-step coherence and contradiction rate
+- measures unresolved-claim rate, tool-evidence consistency and final-answer support ratio
+- exports structured JSON verification reports for reproducible analysis
+- includes a synthetic reasoning-trace sample and automated Pytest coverage
+
+This extension is intentionally software-only and does not expose or depend on hidden model chain-of-thought. It evaluates explicit, user-provided or system-recorded trace steps, claims, tool results and external evidence. The current implementation is a research prototype and does not claim sound or complete formal verification.
+
+### Example use
+
+```python
+from agentbench.reasoning_trace_verifier import (
+    Evidence,
+    TraceStep,
+    verify_trace,
+)
+
+evidence = [
+    Evidence(
+        source_id="policy-1",
+        text="Orders above 100 units require manager approval.",
+        source_type="policy",
+    )
+]
+
+steps = [
+    TraceStep(
+        step_id="step-1",
+        claim="The order requires manager approval.",
+        context="The requested order quantity is 120 units.",
+    )
+]
+
+results, metrics = verify_trace(
+    steps,
+    evidence,
+    final_answer="Approval is required before proceeding.",
+)
+
+print(results)
+print(metrics)
+```
+
+### CV-safe extension description
+
+- Extended LLM-AgentBench with a step-level reasoning-trace verification module for tool-using AI agents, classifying explicit claims as supported, contradicted or unresolved against available evidence.
+- Added hybrid symbolic and statistical checks plus metrics for grounding, contextual relevance, coherence, contradiction rate, unresolved claims, tool-evidence consistency and final-answer support.
