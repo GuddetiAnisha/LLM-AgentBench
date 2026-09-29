@@ -9,13 +9,55 @@ class OllamaAdapter:
         self.model, self.base_url, self.timeout = model, base_url.rstrip("/"), timeout
 
     def chat(self, messages, seed=42):
-        response = requests.post(self.base_url + "/api/chat", json={
-            "model": self.model, "messages": messages, "stream": False, "format": "json",
-            "options": {"temperature": 0, "seed": seed, "num_predict": 512},
-        }, timeout=(5, self.timeout))
+        payload = {
+            "model": self.model,
+            "messages": messages,
+            "stream": False,
+            "format": "json",
+            # Qwen3 and other reasoning models can spend the whole generation
+            # budget on hidden/visible thinking and return an empty content
+            # string. AgentBench needs the JSON action itself, so reasoning is
+            # disabled for deterministic structured benchmark calls.
+            "think": False,
+            "options": {
+                "temperature": 0,
+                "seed": seed,
+                "num_predict": 512,
+            },
+        }
+        response = requests.post(
+            self.base_url + "/api/chat",
+            json=payload,
+            timeout=(5, self.timeout),
+        )
         response.raise_for_status()
         body = response.json()
-        return body["message"]["content"], body.get("prompt_eval_count"), body.get("eval_count")
+
+        message = body.get("message") or {}
+        content = message.get("content")
+        if not isinstance(content, str) or not content.strip():
+            raise ValueError(
+                "Ollama returned an empty response. Ensure the model supports "
+                "non-thinking structured output and that Ollama is up to date."
+            )
+
+        # Validate here as well as in agent.py so malformed model output is
+        # reported clearly as an adapter/structured-output failure.
+        try:
+            parsed = json.loads(content)
+        except json.JSONDecodeError as exc:
+            preview = content[:200].replace("\n", " ")
+            raise ValueError(
+                f"Ollama returned invalid JSON: {exc}; response={preview!r}"
+            ) from exc
+        if not isinstance(parsed, dict):
+            raise ValueError("Ollama JSON response must be an object")
+
+        return (
+            json.dumps(parsed, separators=(",", ":")),
+            body.get("prompt_eval_count"),
+            body.get("eval_count"),
+        )
 
 
 class DemoAdapter:
