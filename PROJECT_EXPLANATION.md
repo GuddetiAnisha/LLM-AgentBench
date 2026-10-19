@@ -144,10 +144,6 @@ It also shows the limits of those measurements. Good scores on simple arithmetic
 
 Future work could include larger held-out datasets, more realistic engineering tasks, verified model versions, independent inference-server resource measurements, stronger statistical analysis, human assessment of explanation quality, and more rigorous evaluation of evidence and reasoning traces.
 
-## 13. Short explanation for an interview
 
-> I developed LLM-AgentBench to study how accurately, consistently, and efficiently AI agents complete controlled engineering tasks. I built a Python pipeline that generates reproducible questions, lets an agent use restricted arithmetic tools, and checks its answer against an independent reference calculation. I used Streamlit to display model comparisons and SQLite to store experiments. I also worked on extensions for test-plan optimization, simulated edge/cloud resource allocation, abstract red-blue policy evaluation, and verification of explicit reasoning claims. The overall goal is to make AI-agent evaluation measurable and transparent, while clearly separating research prototypes and scripted demonstrations from validated real-world performance.
-
----
 
 For detailed implementation rules, limitations, and configuration options, see [README.md](README.md) and [VERIFICATION.md](VERIFICATION.md).
